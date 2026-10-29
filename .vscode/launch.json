@@ -1,0 +1,58 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "auth-service (8080)",
+            "request": "launch",
+            "projectName": "auth-service",
+            "mainClass": "com.turfbooking.auth_service.AuthServiceApplication",
+            "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "owner-service (8083)",
+            "request": "launch",
+            "projectName": "owner-service",
+            "mainClass": "com.turfbooking.owner_service.OwnerServiceApplication",
+            "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "turf-service (8082)",
+            "request": "launch",
+            "projectName": "turf-service",
+            "mainClass": "com.turfbooking.turf_service.TurfServiceApplication",
+            "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "booking-service (8084)",
+            "request": "launch",
+            "projectName": "booking-service",
+            "mainClass": "com.turfbooking.booking_service.BookingServiceApplication",
+            "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "api-gateway (8000)",
+            "request": "launch",
+            "projectName": "api-gateway",
+            "mainClass": "com.turfbooking.api_gateway.ApiGatewayApplication",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ],
+    "compounds": [
+        {
+            "name": "all services + gateway",
+            "configurations": [
+                "owner-service (8083)",
+                "auth-service (8080)",
+                "turf-service (8082)",
+                "booking-service (8084)",
+                "api-gateway (8000)"
+            ],
+            "stopAll": true
+        }
+    ]
+}

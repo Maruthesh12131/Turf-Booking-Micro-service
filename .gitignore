@@ -1,0 +1,6 @@
+# Local secrets and environment-specific settings; keep .env.example as the template.
+.env
+.env.*
+!.env.example
+
+.DS_Store

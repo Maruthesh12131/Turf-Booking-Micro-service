@@ -1,0 +1,21 @@
+# Local infrastructure only: RabbitMQ. Variables come from the root .env file (Compose loads it automatically).
+# PostgreSQL is expected on localhost:5432 with the databases turf_auth, turf_service, turf_owner and turf_booking.
+services:
+  rabbitmq:
+    image: rabbitmq:4-management
+    ports:
+      - "${RABBITMQ_PORT:-5672}:5672"
+      - "${RABBITMQ_MANAGEMENT_PORT:-15672}:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USERNAME:?set RABBITMQ_USERNAME in .env}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:?set RABBITMQ_PASSWORD in .env}
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+
+volumes:
+  rabbitmq-data:
