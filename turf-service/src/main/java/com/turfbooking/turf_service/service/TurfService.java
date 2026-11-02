@@ -117,15 +117,22 @@ public class TurfService {
      * case-insensitive "contains" match on the trimmed text.
      */
     @Transactional(readOnly = true)
-    public PagedResponse<TurfDetailsDTO> searchTurfs(String location, int page, int size) {
+    public PagedResponse<TurfDetailsDTO> searchTurfs(String location, String sport, int page, int size) {
         if (page < 0 || size < 1 || size > MAX_PAGE_SIZE) {
             throw new IllegalArgumentException("page must be >= 0 and size must be between 1 and " + MAX_PAGE_SIZE);
         }
         Pageable pageable = PageRequest.of(page, size, Sort.by("turfId"));
-        String normalized = location == null ? "" : location.trim();
-        Page<Turf> result = normalized.isEmpty()
-                ? turfRepository.findByStatus(TurfStatus.ACTIVE, pageable)
-                : turfRepository.searchByLocation(TurfStatus.ACTIVE, likePattern(normalized), pageable);
+        String normalizedLocation = location == null ? "" : location.trim();
+        String normalizedSport = sport == null ? "" : sport.trim().replaceAll("\\s+", " ").toLowerCase(java.util.Locale.ROOT);
+        Page<Turf> result;
+        if (!normalizedSport.isEmpty()) {
+            String pattern = normalizedLocation.isEmpty() ? "%" : likePattern(normalizedLocation);
+            result = turfRepository.searchByLocationAndSport(TurfStatus.ACTIVE, pattern, normalizedSport, pageable);
+        } else if (normalizedLocation.isEmpty()) {
+            result = turfRepository.findByStatus(TurfStatus.ACTIVE, pageable);
+        } else {
+            result = turfRepository.searchByLocation(TurfStatus.ACTIVE, likePattern(normalizedLocation), pageable);
+        }
         return PagedResponse.of(result, toDetails(result.getContent()));
     }
 

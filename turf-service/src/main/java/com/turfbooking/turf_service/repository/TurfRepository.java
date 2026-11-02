@@ -30,4 +30,11 @@ public interface TurfRepository extends JpaRepository<Turf, Long> {
     @Modifying
     @Query("update Turf t set t.status = :status where t.ownerId = :ownerId and t.status <> :status")
     int updateStatusByOwner(@Param("ownerId") Long ownerId, @Param("status") TurfStatus status);
+
+    // sport is lower-cased and trimmed; pattern is built like in searchByLocation ("%" matches any location).
+    @Query(value = "select distinct t from Turf t join t.courts c join c.availableSports s "
+            + "where t.status = :status and lower(t.location) like :pattern escape '\\' and lower(s.sportName) = :sport",
+            countQuery = "select count(distinct t) from Turf t join t.courts c join c.availableSports s "
+            + "where t.status = :status and lower(t.location) like :pattern escape '\\' and lower(s.sportName) = :sport")
+    Page<Turf> searchByLocationAndSport(@Param("status") TurfStatus status, @Param("pattern") String pattern, @Param("sport") String sport, Pageable pageable);
 }

@@ -446,7 +446,7 @@ class TurfServiceTest {
     @Test
     void blankLocationListsAllActiveTurfsPaged() {
         when(turfRepository.findByStatus(any(), any())).thenReturn(new org.springframework.data.domain.PageImpl<>(List.of(turf)));
-        assertThat(service.searchTurfs("   ", 0, 20).content()).hasSize(1);
+        assertThat(service.searchTurfs("   ", null, 0, 20).content()).hasSize(1);
         verify(turfRepository).findByStatus(any(), any());
         verify(turfRepository, never()).searchByLocation(any(), any(), any());
     }
@@ -454,7 +454,7 @@ class TurfServiceTest {
     @Test
     void locationSearchUsesNormalizedEscapedPattern() {
         when(turfRepository.searchByLocation(any(), any(), any())).thenReturn(new org.springframework.data.domain.PageImpl<>(List.of()));
-        service.searchTurfs("  Anna   NAGAR 100%_ ", 0, 20);
+        service.searchTurfs("  Anna   NAGAR 100%_ ", null, 0, 20);
         ArgumentCaptor<String> pattern = ArgumentCaptor.forClass(String.class);
         verify(turfRepository).searchByLocation(any(), pattern.capture(), any());
         assertThat(pattern.getValue()).isEqualTo("%anna nagar 100\\%\\_%");
@@ -462,9 +462,9 @@ class TurfServiceTest {
 
     @Test
     void pagingIsBounded() {
-        assertThatThrownBy(() -> service.searchTurfs(null, -1, 20)).isInstanceOf(IllegalArgumentException.class);
-        assertThatThrownBy(() -> service.searchTurfs(null, 0, 0)).isInstanceOf(IllegalArgumentException.class);
-        assertThatThrownBy(() -> service.searchTurfs(null, 0, 101)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> service.searchTurfs(null, null, -1, 20)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> service.searchTurfs(null, null, 0, 0)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> service.searchTurfs(null, null, 0, 101)).isInstanceOf(IllegalArgumentException.class);
     }
 
     // ---- sports on courts ----

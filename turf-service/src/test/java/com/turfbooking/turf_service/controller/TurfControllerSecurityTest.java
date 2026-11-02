@@ -67,7 +67,7 @@ class TurfControllerSecurityTest {
 
     @Test
     void anonymousCanBrowseTurfs() throws Exception {
-        when(turfService.searchTurfs(any(), eq(0), eq(20))).thenReturn(new PagedResponse<>(List.of(), 0, 20, 0, 0));
+        when(turfService.searchTurfs(any(), any(), eq(0), eq(20))).thenReturn(new PagedResponse<>(List.of(), 0, 20, 0, 0));
         when(turfService.getActiveTurfDetails(1L)).thenReturn(null);
         mvc.perform(get("/turfs")).andExpect(status().isOk());
         mvc.perform(get("/turfs/1")).andExpect(status().isOk());
@@ -129,14 +129,14 @@ class TurfControllerSecurityTest {
 
     @Test
     void searchPassesLocationAndPaging() throws Exception {
-        when(turfService.searchTurfs("chen", 2, 5)).thenReturn(new PagedResponse<>(List.of(), 2, 5, 0, 0));
+        when(turfService.searchTurfs("chen", null, 2, 5)).thenReturn(new PagedResponse<>(List.of(), 2, 5, 0, 0));
         mvc.perform(get("/turfs?location=chen&page=2&size=5")).andExpect(status().isOk());
-        verify(turfService).searchTurfs("chen", 2, 5);
+        verify(turfService).searchTurfs("chen", null, 2, 5);
     }
 
     @Test
     void invalidPagingIsBadRequestAndHiddenTurfIsNotFound() throws Exception {
-        when(turfService.searchTurfs(any(), eq(0), eq(1000))).thenThrow(new IllegalArgumentException("bad paging"));
+        when(turfService.searchTurfs(any(), any(), eq(0), eq(1000))).thenThrow(new IllegalArgumentException("bad paging"));
         mvc.perform(get("/turfs?size=1000")).andExpect(status().isBadRequest());
         when(turfService.getActiveTurfDetails(9L)).thenThrow(new TurfNotFoundException(9L));
         mvc.perform(get("/turfs/9")).andExpect(status().isNotFound());

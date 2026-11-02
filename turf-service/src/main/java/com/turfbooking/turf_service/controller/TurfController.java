@@ -66,9 +66,10 @@ public class TurfController {
     @GetMapping
     public ResponseEntity<PagedResponse<TurfDetailsDTO>> searchTurfs(
             @RequestParam(required = false) String location,
+            @RequestParam(required = false) String sport,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
-        return ResponseEntity.ok(turfService.searchTurfs(location, page, size));
+        return ResponseEntity.ok(turfService.searchTurfs(location, sport, page, size));
     }
 
     @GetMapping("/mine")
